@@ -1,0 +1,184 @@
+﻿@inject SignInManager<AppUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AirBnB</title>
+    @*Bootstrap link*@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @*<link rel="stylesheet" href="~/AirBnB.styles.css" asp-append-version="true" />*@
+
+    @*google fonts*@
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Fraunces:opsz,wght@9..144,700&family=Montserrat:wght@500;700&family=Open+Sans:wght@300;400;500;600;700;800&family=Work+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Charm:wght@700&family=Cinzel:wght@500;600;700;800;900&family=Mulish:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,1000;1,200;1,300;1,400;1,500&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+    @*normalize file*@
+    <link rel="stylesheet" href="~/css/normalize.css">
+    @*fonts awesome icons library*@
+    <link rel="stylesheet" href="~/css/all.min.css">
+    @*booking.css*@
+    <link rel="stylesheet" href="~/css/Booking.css">
+    @*main css file *@
+    <link rel="stylesheet" href="~/css/main.css">
+    @*maps css file*@
+    <link rel="stylesheet" href="./css/maps.css">
+   
+</head>
+<body>
+   @*header*@
+<!-- Start header -->
+    <div class="header" id="header">
+        <div class="container">
+            <a asp-controller="Home" asp-action="index"><i class="fa-brands fa-airbnb" id="logo"></i></a>
+            <ul class="main-nav">
+                <partial name="_LoginPartial" />
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li><a asp-controller="Properties" asp-action="Create">Create Property</a></li>
+                }
+                <li><a asp-controller="Properties" asp-action="index">Properties</a></li>
+                <li><a asp-controller="Home" asp-action="index">Home</a></li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a href="#">Admin</a>
+                        <!-- Start Mega-Menu -->
+                        <div class="mega-menu">
+                            <div class="image">
+                                <img src="~/LayoutImgs/Admin.png" alt="Admin Image">
+                            </div>
+                            <ul class="links">
+                                <li>
+                                    <a asp-area="" asp-controller="Users" asp-action="index"><i class="fa-solid fa-users"></i>Manage Users</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Amenities" asp-action="index"><i class="fa-solid fa-wifi"></i>Amenities</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Cities" asp-action="index"><i class="fa-solid fa-tree-city"></i>Cities</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Properties" asp-action="AdminIndex"><i class="fa-solid fa-house"></i>Manage Properties</a>
+                                </li>
+                            </ul>
+                            <ul class="links">
+                                <li>
+                                    <a asp-area="" asp-controller="Roles" asp-action="index"><i class="fa-solid fa-gears"></i>Manage Roles</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Categorays" asp-action="index"><i class="fa-solid fa-sliders"></i>Categoraies</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Areas" asp-action="index"><i class="fa-solid fa-city"></i>Areas</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Bookings" asp-action="index"><i class="fa-solid fa-sliders"></i>Manage Booking</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Reviews" asp-action="index"><i class="fa-solid fa-comments"></i>Manage Reviews</a>
+                                </li>
+                        </div>
+                        <!-- End Mega-Menu -->
+                    </li>
+                }
+                
+            </ul>
+        </div>
+    </div>
+<!-- End header -->
+
+
+   @*start body*@
+            @RenderBody()
+   @*end body*@
+
+
+   @*footer*@
+<!-- Start Footer  -->  
+    <footer class="bg-light text-dark pt-5 pb-4 footer">
+      <div class="container text-center text-md-left">
+        <div class="row text-center text-md-left">
+          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h6 class="text-uppercase mb-4 font-weight-bold text-Dark">support</h6>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Help Center</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">AirCover</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Supporting people with disabilities</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Cancellation options</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Our COVID-19 Response</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Report a neighborhood concern</a></p>
+          </div>
+          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h6 class="text-uppercase mb-4 font-weight-bold text-Dark">Community</h6>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Airbnb.org: disaster relief housing</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Combating discriminatino</a></p>
+          </div>
+          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h6 class="text-uppercase mb-4 font-weight-bold text-Dark">Hosting</h6>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Airbnb your home</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">AirCover for Hosts</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Explore hosting resources</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Visit our community forum</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">How to host responsibly</a></p>
+          </div>
+          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h6 class="text-uppercase mb-4 font-weight-bold text-Dark">Airbnb</h6>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Newsroom</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Learn about new features</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Letter from our founders</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Careers</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Investors</a></p>
+            <p><a href="#" class="text-dark" style="text-decoration:none">Gift Cards</a></p>
+          </div>
+          <hr class="mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-7 col-lg-8">
+              <span>© 2023 Airbnb, Inc. </span>
+              <a href="#" class="text-dark" style="text-decoration:none">. Terms</a>
+              <a href="#" class="text-dark" style="text-decoration:none">. Sitemap</a>
+              <a href="#" class="text-dark" style="text-decoration:none">. Privacy</a>
+              <a href="#" class="text-dark" style="text-decoration:none">. Your Privacy Choices</a>
+            </div>
+            <div class="col-md-3 col-md-4 ">
+              <div class="text-center text-md-right">
+                <i class="fa-solid fa-globe"></i>
+                <span>
+                  English (US) </span>
+                <a href="https://www.facebook.com/airbnbuk/?brand_redir=324826532457">
+                <i class="fa-brands fa-facebook"></i></a>
+                <a href="https://twitter.com/airbnb"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://www.instagram.com/airbnb/"><i class="fa-brands fa-instagram"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+<!-- End Footer -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/zego-zim-web/index.js" asp-append-version="true"></script>
+    <script>
+        function previewBeforeUpload(id) {
+            document.querySelector("#" + id).addEventListener("change", function (e) {
+                if (e.target.files.length == 0) {
+                    return;
+                }
+                let file = e.target.files[0];
+                let url = URL.createObjectURL(file);
+                var img = document.querySelector("#" + id + "-preview img");
+                img.src = url;
+            });
+        }
+
+        previewBeforeUpload("file-1");
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

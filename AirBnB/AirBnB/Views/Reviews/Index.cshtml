@@ -1,0 +1,62 @@
+﻿@model IEnumerable<AirBnB.Models.Review>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="container" style="text-align:center">
+    <h1>Reviews</h1>
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Review Rate
+                </th>
+                <th>
+                    Review Comment
+                </th>
+                <th>
+                    Property Title
+                </th>
+                <th>
+                    Guest
+                </th>
+                <th>
+                    Manage
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                Property Prop = null;
+                AppUser Guest = null;
+            }
+            @foreach (var item in Model)
+            {
+                Prop = item.Property;
+                Guest = item.AppUser;
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReviewRate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReviewComment)
+                    </td>
+                    <td>
+                        @Prop.PropertyTitle
+                    </td>
+                    <td>
+                        @Guest.Email
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

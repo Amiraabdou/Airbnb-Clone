@@ -1,0 +1,670 @@
+﻿@inject UserManager<AppUser> UserManager
+@model AirBnB.Models.Property
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+    var revew = Model.Reviews.ToList();
+    var imgs = Model.PropertyImgs.ToList();
+
+
+
+}
+
+@*start scripts for maps*@
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6v5-2uaq_wusHDktM9ILcqIrlPtnZgEk&sensor=false">
+</script>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places">
+</script>
+
+<script type="text/javascript">
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success);
+    } else {
+        alert("There is Some Problem on your current browser to get Geo Location!");
+    }
+
+    function success(position) {
+        //var lat = position.coords.latitude;
+        //var long = position.coords.longitude;
+
+        var lat = @Model.Area.lat;
+        var long = @Model.Area.log;
+
+        var city = position.coords.locality;
+        var LatLng = new google.maps.LatLng(lat, long);
+        var mapOptions = {
+            center: LatLng,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        var map = new google.maps.Map(document.getElementById("MyMapLOC"), mapOptions);
+        var marker = new google.maps.Marker({
+            position: LatLng,
+            title: "<div style = 'height:60px;width:200px'><b>Your location:</b><br />Latitude: "
+                + lat + +"<br />Longitude: " + long
+        });
+
+        marker.setMap(map);
+        var getInfoWindow = new google.maps.InfoWindow({
+            content: "<b>Your Current Location</b><br/> Latitude:" +
+                lat + "<br /> Longitude:" + long + ""
+        });
+        getInfoWindow.open(map, marker);
+    }
+</script>
+@*End scripts for maps*@
+
+<section class="first mb-5 mt-5">
+    <div class="container mt-5  ">
+        <h2 class="heading ">
+            @Model.PropertyDescription
+        </h2>
+        <div class="row justify-content-between mb-3 w-100">
+            <div class="col-lg-8 col-sm-12">
+                <i class="fa-solid fa-star"></i>
+                @{
+                    int max = 0;
+                }
+                @foreach (var r in revew)
+                {
+                    max += r.ReviewRate;
+                }
+                @{
+                    int avregeview = 0;
+                    if (Enumerable.Count(revew) > 0)
+                    {
+                        avregeview = max / Enumerable.Count(revew);
+                    }
+                }
+                <span>@avregeview</span>
+                <a class="mx-2 text-dark" href="#">@Enumerable.Count(revew) Reviews ·</a>
+                <a asp-action="ShowProp" asp-route-id="@Model.AreaId" class="text-dark">@Model.Area.AreaName,</a>
+                <a asp-action="Index" asp-route-id="@Model.Area.CityId" class="text-dark"> @Model.Area.City.CityName Governorate, Egypt</a>
+
+
+            </div>
+
+            <div class="col-lg-2  col-12 d-flex justify-content-end   ">
+                @if (SignInManager.IsSignedIn(User) && Model.AppUserId == ViewData["userid"].ToString())
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.PropertyId" class="btn btn-danger btn-lg mt-3 w-100">Delete This Property</a>
+
+
+
+                }
+                else if (SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Bookings" asp-action="Create" asp-route-id="@Model.PropertyId" class="btn btn-danger btn-lg mt-3 w-100">Book it Now</a>
+
+
+
+                }
+
+
+
+            </div>
+
+        </div>
+
+
+        <div class="row ">
+            @for (int i = 0; i < 3; i++)
+            {
+                
+                    @if (i == 0)
+                    {
+                        <div class="col-lg-6 image col-sm-12">
+
+                            <img src="~/Images/@imgs[i].ImgSrc" class="img-fluid rounded w-100 h-100 shadow-1 " alt="...">
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-3   col-6" style="margin-right:-10px ;">
+                            <img src="~/Images/@imgs[i*2 - 1].ImgSrc" class="img-fluid rounded w-100 h-50 p-1 shadow-1 " alt="...">
+                            @if (i * 2 < imgs.Count())
+                            {
+                                <img src="~/Images/@imgs[i*2].ImgSrc" class="img-fluid rounded w-100 h-50 p-1 shadow-1" alt="...">
+
+
+                            }
+
+                        </div>
+
+                    }
+                
+            }
+
+
+
+
+        </div>
+
+
+
+    </div>
+</section>
+<section class="second">
+    <div class="container ">
+        <div class="row ">
+            <div class="col-lg-8 border-bottom  col-sm-12 ">
+                <div class=" border-bottom ">
+                    <h3 class="heading">Entire @Model.PropertyTitle hosted by @Model.AppUser.FirstName</h3>
+                    <div class="mb-4">
+                        <span>@Model.PropertyCapacity guests.</span>
+                        <span>@Model.PropertyBedRooms bedrooms.</span>
+                        <span>@Model.PropertyBedsNum beds.</span>
+                        <span>@Model.PropertyBath bath</span>
+                    </div>
+                </div>
+
+
+                <div class="row ">
+                    <div class="col-1  d-flex justify-content-center align-items-center fs-3">
+                        <i class="fa-sharp fa-solid fa-key"></i>
+                    </div>
+                    <div class="card col-11 border-0  ">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Great check-in experience</h5>
+                            <p class="card-text">94% of recent guests gave the check-in process a 5-star rating.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-1  d-flex justify-content-center align-items-center fs-3">
+                        <i class="fa-solid fa-square-parking"></i>
+                    </div>
+                    <div class="card col-11 border-0 ">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Park for free</h5>
+                            <p class="card-text">This is one of the few places in the area with free parking.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row border-bottom ">
+                    <div class="col-1  d-flex justify-content-center align-items-center fs-3">
+                        <i class="fa-regular fa-message"></i>
+                    </div>
+                    <div class="card col-11 border-0  ">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Great communication</h5>
+                            <p class="card-text">90% of recent guests rated Dina 5-star in communication.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</section>
+
+<!-- property details section -->
+<!-- Amenities -->
+
+<section class="Amenities mt-5">
+    <div class="container">
+        <div class="row  ">
+            <div class="col-lg-8 mb-4 border-bottom col-sm-12">
+                <div class="heading h2 mb-4 ">
+                    What this place offers
+                </div>
+                <div class="row  justify-content-between">
+
+                    @foreach (var i in Model.Amenities)
+                    {
+                        <div class=" col-6  d-flex ">
+                            <div class="d-flex mb-4 ">
+                                <img src="~/AmenityImg/@i.AmenityImgSrc" style="width:25px; height20px; margin-right:10px;" />
+                                <p>@i.AmenityName</p>
+                            </div>
+                        </div>
+
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</section>
+
+<!-- Reviews -->
+<section class="reviews  ">
+    <div class="container ">
+        <div class="row ">
+            <div class="col-12 ">
+                <div class="heading mb-3">
+                    Reviews
+                </div>
+
+                <i class="fa-solid fa-star h5"></i>
+
+                <span class="h5">@avregeview ·</span>
+                <a class="mx-2 text-dark " href="#">@Enumerable.Count(revew ) reviews </a>
+            </div>
+        </div>
+
+        <!--inset review -->
+        @if (SignInManager.IsSignedIn(User) && (bool)ViewData["r"] == true)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    @if (ViewBag.flag == false)
+                    {
+                        <div class="alert alert-danger" style="width:100%;text-align:center;margin-left:2px" role="alert">
+                            <h3>You Must Enter A Number Between 1 to 5 </h3>
+                        </div>
+                    }
+                    <form asp-action="Create" asp-controller="Reviews">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+
+                            <input asp-for="AppUserId" class="form-control" value="@ViewData["userid"]" type="hidden" />
+                        </div>
+                        <div class="form-group">
+
+                            <input asp-for="PropertyId" class="form-control" value='@ViewData["SelectedPropertyId"]' type="hidden" />
+                        </div>
+                        <div class="form-group">
+                            <h5 name="ReviewRate" class="control-label">Rate your experience</h5>
+                            <div class="text-warning fs-6">Insert from 1 to 5</div>
+                            <input name="ReviewRate" class="form-control" />
+                            <span name="ReviewRate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <h5 name="ReviewComment" class="control-label mb-2 mt-2">Write your comment</h5>
+                            <textarea name="ReviewComment" rows="5" cols="60" class="form-control rounded-3 textarea fs-5 p-3"></textarea>
+                            <span name="ReviewComment" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Submit" class="btn btn-warning mt-3" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        }
+        <!-- comments -->
+
+        <div class="row mt-5 ">
+            <!-- one comment -->
+            @foreach (var i in Model.Reviews)
+            {
+                var User = UserManager.Users.FirstOrDefault(a => a.Id == i.AppUserId);
+                byte[] byteArray = User.ProfilePicture;
+                string base64Strimg = null;
+                @if (byteArray != null)
+                {
+                    base64Strimg = Convert.ToBase64String(byteArray);
+                }
+
+                <div class="col-lg-6 gx-1 col-12  ">
+                    <div class="card border-0   mb-3 ">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <img src="data:image/png;base64,@base64Strimg" alt="notfound" style="width:50px;height:50px" class="rounded-circle">
+                                <div class="name date mx-3">
+                                    <h5 class="card-title"> @User.FirstName</h5>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                @i.ReviewComment
+                            </p>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- map -->
+<section class="mt-5 mx-5 mb-5">
+    <div class="heading">Where You Will Be</div>
+    @*maps from here*@
+
+    <form id="form1" runat="server" class="map">
+        <div id="MyMapLOC" style="width: 550px; height: 470px" class="map offset-3">
+        </div>
+    </form>
+
+    @*to here*@
+
+
+</section>
+
+<!-- host-info -->
+<section class="host mb-5">
+    <div class="container">
+
+        <div class="row">
+            <div class="card border-0">
+                <div class="card-body">
+                    <div class=" d-flex mb-3">
+
+                        @{
+
+                            byte[] byteArray2 = Model.AppUser.ProfilePicture;
+                            string base64Strimg2 = null;
+                            @if (byteArray2 != null)
+                            {
+                                base64Strimg2 = Convert.ToBase64String(byteArray2);
+                            }
+
+                        }
+                        <a href="/profile/showprofile/@Model.PropertyId">
+                            <img src="data:image /png;base64,@base64Strimg2" alt="" style="width:70px;height:70px " class="rounded-circle">
+                        </a>
+
+                        <div class="name date mx-3">
+                            <h5 class="card-title">
+                                Hosted by @Model.AppUser.FirstName
+                            </h5>
+
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+
+                        <li class="list-group-item  border-0 h5 ">
+                            @Model.PropertyHostInfo
+                        </li>
+                    </ul>
+
+                    <div class="card-footert mt-3 border p-1">
+                        <div class="row">
+                        </div>
+                        <div class="col-lg-3 d-flex col-10">
+                            <i class="fa-solid fa-shield  mx-3 align-self-center"></i>
+                            <p>
+                                To protect your payment, never transfer money or communicate outside of the Airbnb website or app.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+           </div>
+
+        </div>
+
+
+
+
+
+
+
+
+    </div>
+
+
+</section>
+
+<!-- house rules -->
+<section class="rules">
+    <div class="container">
+        <div class="row">
+            <div class="heading">
+                Things to know
+
+            </div>
+            <!-- first col -->
+            <div class="col-lg-4 col-12">
+                <div class="card border-0">
+                    <div class="card-header border-0 h5">
+                        House rules
+
+                    </div>
+                    <ul class="list-group list-group-flush border-0">
+                        <li class="list-group-item border-0">
+                            Check-in after 3:00 PM
+                        </li>
+                        <li class="list-group-item border-0">
+                            Checkout before 11:00 AM
+                        </li>
+                        <li class="list-group-item border-0">
+                            4 guests maximum
+
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- second col -->
+            <div class="col-lg-4 col-12">
+                <div class="card border-0">
+                    <div class="card-header border-0 h5">
+                        Safety & property
+
+
+                    </div>
+                    <ul class="list-group list-group-flush border-0">
+                        <li class="list-group-item border-0">No carbon monoxide alarm </li>
+                        <li class="list-group-item border-0">No smoke alarm </li>
+
+                    </ul>
+
+                </div>
+            </div>
+            <!-- third col -->
+            <div class="col-lg-4 col-12">
+                <div class="card border-0">
+                    <div class="card-header border-0 h5 ">
+                        Cancellation policy
+
+
+                    </div>
+                    <p class="card-text mx-3">Review the Host’s full cancellation policy which applies even if you cancel for illness or disruptions caused by COVID-19.</p>
+
+
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</section>
+<!-- footer -->
+
+<section class="areas mt-5 bg-light">
+    <div class="container">
+        <!-- first sec -->
+        <div class="row">
+            <div class="heading mb-3">
+                Explore other options in and around Sidi Gabir
+
+
+            </div>
+            <!-- first col -->
+            @foreach (var i in ViewBag.areas)
+            {
+
+                <div class="col-lg-3 col-6">
+                    <ul class="list-group list-group-flush border-0 ">
+                        <li class="list-group-item border-0 bg-light"><a asp-action="ShowProp" asp-route-id="@i.AreaId" class="text-dark text-decoration-none ">@i.AreaName</a></li>
+
+                    </ul>
+
+                </div>
+
+            }
+            @*       <div class="col-lg-3 col-6">
+            <ul class="list-group list-group-flush border-0 ">
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none ">El-Agamy</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">San Stifano</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Sidi bishr</a></li>
+
+            </ul>
+
+            </div>
+            <!-- second col -->
+            <div class="col-lg-3 col-6">
+            <ul class="list-group list-group-flush border-0">
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none ">Bahary</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Roshdy</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Asafra</a></li>
+
+            </ul>
+
+            </div>
+            <!-- third col -->
+            <div class="col-lg-3 col-6">
+            <ul class="list-group list-group-flush border-0">
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none ">Kafr Abdu</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Glim</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Louran</a></li>
+
+            </ul>
+
+            </div>
+            <!-- fourth col -->
+            <div class="col-lg-3 col-6">
+            <ul class="list-group list-group-flush border-0">
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none ">Zezenia</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Mahatet El Raml</a></li>
+            <li class="list-group-item border-0 bg-light"><a href="#" class="text-dark text-decoration-none">Smouha</a></li>
+
+            </ul>
+
+            </div>*@
+            <!-- links -->
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+    </div>
+
+</section>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuHK4vUVWB0LI15XwIbtvUTFkvop134Uo&callback=initMap" async defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<div>
+    <h4>Property</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyTitle)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyTitle)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyDescription)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyCapacity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyCapacity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyBedsNum)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyBedsNum)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyBedRooms)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyBedRooms)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyBath)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyBath)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyPricePerNight)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyPricePerNight)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertyHostInfo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PropertyHostInfo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AppUser)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AppUser.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Area)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Area.AreaName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Categoray)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Categoray.CategorayName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PropertyId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+*@
