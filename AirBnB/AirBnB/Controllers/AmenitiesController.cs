@@ -132,21 +132,23 @@ namespace AirBnB.Controllers
             {
                 try
                 {
-					if (imgFile != null)
+                    if (imgFile != null)
                     {
-						string fileName = amenity.AmenityId.ToString() + "." + imgFile.FileName.Split(".").Last();
+                        string fileName = amenity.AmenityId.ToString() + "." + imgFile.FileName.Split(".").Last();
 
-						using (var fs = System.IO.File.Create("wwwroot/AmenityImg/" + fileName))
-						{
-							imgFile.CopyTo(fs);
-						}
+                        using (var fs = System.IO.File.Create("wwwroot/AmenityImg/" + fileName))
+                        {
+                            imgFile.CopyTo(fs);
+                        }
 
-						amenity.AmenityImgSrc = fileName;
+                        amenity.AmenityImgSrc = fileName;
 
-					}
+                    }
 
 
-					
+
+
+
                     _context.Update(amenity);
                     await _context.SaveChangesAsync();
                 }
