@@ -136,11 +136,9 @@
 									<div class="card-footer border-0 bg-transparent  ">
 										<small><span class="h6 ">@item.PropertyPricePerNight$</span> <span class="text-muted">per night</span></small>
 									</div>
-									<div class="m-auto">
-										    @*<a asp-controller="Properties" asp-action="Details/@Model.PropertyId" asp-route-id="@item.PropertyId" class="btn btn-primary h-50 px-5 m-1 " style="padding-bottom:25px ">Details</a>*@
-										@*<form action="/Properties/Details/@Model.PropertyId" method="get">
-											<input type="button" value="Details" class="btn btn-primary h-50 px-5 m-1" style="padding-bottom:25px">
-										</form>*@
+									<div class="m-auto" style="text-align:center">
+									<a href="/Properties/Details/@item.PropertyId" class="btn btn-primary h-50 px-5 m-1 " style="padding-bottom:10px ">Details</a>
+
 									
 
 
